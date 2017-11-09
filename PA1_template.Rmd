@@ -1,18 +1,33 @@
 ---
 title: "Reproducible Research: Peer Assessment 1"
 output: 
-  html_document:
-    keep_md: true
+html_document:
+keep_md: true
 ---
 
 
 ## Loading and preprocessing the data
+```{r echo = TRUE}
 
+## Load the Data
+if(!file.exists('activity.csv')) {
+  unzip('activity.zip')
+}
+ 
+actData <- read.csv("activity.csv")
+summary(actData)
 
+## Preprocess the Data for formatting the date fields
+actData$date = as.Date(actData$date)
+
+```
 
 ## What is mean total number of steps taken per day?
+```{r echo = TRUE}
 
 
+
+```
 
 ## What is the average daily activity pattern?
 
