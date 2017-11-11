@@ -61,9 +61,44 @@ plot(avgstepsperInterval$interval, avgstepsperInterval$avgs, type = "l", main = 
 ##Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 maxStepsPerInterval <-avgstepsperInterval[which.max(avgstepsperInterval$avgs),]$interval
 print(maxStepsPerInterval)
+
 ```
 
 ## Inputing missing values
+
+```{r echo = TRUE}
+
+## Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+totMisValues <- sum(is.na(actData$steps))
+print (totMisValues)
+
+## Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc
+
+## The Strategy to input the missing values would be mean for that interval and below function returns mean value for that interval 
+
+getMissingValue <- function(interval) {
+    avgstepsperInterval[avgstepsperInterval$interval == interval,]$steps
+}
+    
+## Create a new dataset that is equal to the original dataset but with the missing data filled in
+refData <- actData
+for (i in 1:nrow(refData))
+{
+ if(is.na(refData[i,]$steps)) {
+      refData[i,]$steps <- getMissingValue(refData[i,]$interval)
+   }    
+}
+
+summary(refData)
+
+## Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+s3 <- group_by(refData, date)
+refStepsperday <- summarize(s3, ST = sum(steps))
+print(refStepsperday)
+
+
+```
 
 
 
