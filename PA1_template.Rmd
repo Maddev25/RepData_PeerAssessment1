@@ -26,7 +26,7 @@ actData$date = as.Date(actData$date)
 ## What is mean total number of steps taken per day?
 ```{r echo = TRUE}
 
-## Loadneeded R packages 
+## Included R packages necessary for processing
 library(dplyr)
 
 ## Calculate the total number of steps taken per day
@@ -35,7 +35,7 @@ stepsperday <- summarize(s1, stepsTotal = sum(steps, na.rm = TRUE))
 print(stepsperday)
 
 ## If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day
-hist(stepsperday$stepsTotal, main = "Histogram of Steps Per Day", xlab = "Total Steps per day")
+hist(stepsperday$stepsTotal, main = "Total Steps Analysis", xlab = "Total Steps")
 
 ## Calculate and report the mean and median of the total number of steps taken per day
 medianStepsperday <- median(stepsperday$stepsTotal)
@@ -77,7 +77,7 @@ print (totMisValues)
 ## The Strategy to input the missing values would be mean for that interval and below function returns mean value for that interval 
 
 getMissingValue <- function(interval) {
-    avgstepsperInterval[avgstepsperInterval$interval == interval,]$steps
+    avgstepsperInterval[avgstepsperInterval$interval == interval,]$avgs
 }
     
 ## Create a new dataset that is equal to the original dataset but with the missing data filled in
@@ -97,9 +97,49 @@ s3 <- group_by(refData, date)
 refStepsperday <- summarize(s3, ST = sum(steps))
 print(refStepsperday)
 
+hist(refStepsperday$ST, main = "Total Steps Analysis", col = "green", xlab = "Total Steps")
+
+## Median steps per day in refined data set 
+refMedianstepsperday <- median(refStepsperday$ST)
+
+## Mean Steps per day in refined data set 
+refMeanstepsperday <- mean(refStepsperday$ST)
+
+print(refMeanstepsperday)
+print(refMedianstepsperday)
+
+# The Median Steps had not changed much whereas the mean steps per day in the refined data set by inputting missing values increased by 10% 
 
 ```
 
 
-
 ## Are there differences in activity patterns between weekdays and weekends?
+
+```{r echo = TRUE}
+## Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+refData$day <- weekdays(refData$date)
+
+for (j in 1:nrow(refData)){
+    
+    if(refData[j,]$day %in% c("Saturday", "Sunday")){
+        refData[j,]$day <- "weekend"
+    }
+    else {
+        refData[j,]$day <- "weekday"
+    }
+}
+summary(refData)
+
+##Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+
+s4 <- group_by(refData, interval,day)
+refSteps <- summarize(s4, stepT = mean(steps))
+summary(refSteps)
+
+## To include lattice package for plotting 
+library(lattice)
+
+xyplot(stepT ~ interval | day,refSteps, type = "l", layout = c(1,2), xlab = "Interval" , ylab = "Average Number of Steps", main= "Average Steps Analysis across weekend and weekdays" )
+
+```
+
